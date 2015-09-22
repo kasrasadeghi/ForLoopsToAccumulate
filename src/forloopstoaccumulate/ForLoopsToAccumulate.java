@@ -5,6 +5,11 @@
  */
 package forloopstoaccumulate;
 
+import static java.lang.Integer.signum;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.lang.Integer;
+
 /**
  *
  * @author DSTIGANT
@@ -15,21 +20,21 @@ public class ForLoopsToAccumulate
 
     public static void main(String[] args)
     {
-        testAddRange();
-        //testAlternatingSumRange();
-        //testSumOfSquaresRange();
-        //testFactorial();
-        //testPower();
-        //testCountPrimesInRange();
-        //testAddPrimesInRange();
-        //testReverseString();
-        //testAltCap();
-        //testRangeToString();
-        //testGetVowels();
-        //testCountNonVowels();
-        //testAllVowels();
-        //testPrimeGap();
-        //testProductRange();
+//        testAddRange();
+//        testAlternatingSumRange();
+//        testSumOfSquaresRange();
+//        testFactorial();
+        testPower();
+//        testCountPrimesInRange();
+//        testAddPrimesInRange();
+//        testReverseString();
+//        testAltCap();
+//        testRangeToString();
+//        testGetVowels();
+//        testCountNonVowels();
+//        testAllVowels();
+//        testPrimeGap();
+//        testProductRange();
     }
 
     // ********************************************************
@@ -42,7 +47,8 @@ public class ForLoopsToAccumulate
     // for example, addRange( 5, 10 ) ==> 5 + 6 + 7 + 8 + 9 + 10 = 45
     public static int addRange( int A, int B )
     {
-        return 0;
+        return (A <= B) ? IntStream.rangeClosed(A, B).sum() : IntStream.rangeClosed(B, A).map( a -> -a).sum();
+        
     }
 
     public static void testAddRange()
@@ -59,7 +65,12 @@ public class ForLoopsToAccumulate
     // example: alternatingSumRange( 5, 11 ) ==> 5 - 6 + 7 - 8 + 9 - 10 + 11 = 8
     public static int alternatingSumRange( int A, int B )
     {
-        return 0;
+//        for (int i = 0; i <=B-A; i++)
+//            sum += (i%2 == 0) ? A+i : -A-i;
+        return (A <= B) ? IntStream
+                .iterate(A, n -> (Integer.signum(n) == -1) ? -n+1 : -n-1)
+                .limit(B-A).sum() 
+                : 0;
     }
 
     public static void testAlternatingSumRange()
@@ -70,13 +81,12 @@ public class ForLoopsToAccumulate
         System.out.println( "alternatingSumRange( 10, 5 ) ==> " + alternatingSumRange( 10, 5 ) );
     }
 
-    // sumOfSquaresRange
-    // consumes two ints A and B
+    // sumOfSquaresRang    // consumes two ints A and B
     // returns the sum of the squares of the numbers between A and B, inclusive
     // example: sumOfSquaresRange( 5, 10 ) ==> 5^2 + 6^2 + 7^2 + 8^2 + 9^2 + 10^2 = 355
     public static int sumOfSquaresRange( int A, int B )
     {
-        return 0;
+        return (Integer.signum(A) == 1 && Integer.signum(B) == 1 && A <=B) ? IntStream.rangeClosed(A, B).map(a -> a*a).sum() : 0;
     }
 
     public static void testSumOfSquaresRange()
@@ -93,13 +103,14 @@ public class ForLoopsToAccumulate
     // also, factorial( 0 ) ==> 1
     public static int factorial( int n )
     {
-        return 0;
+        return IntStream.iterate(n, a -> a-1).limit(n).reduce(1, (v1, v2) -> v1*v2);
     }
 
     // add some test cases for factorial here.  Make sure you test a good range of values
     public static void testFactorial()
     {
-
+        System.out.println( "factorial(5) ==> " + factorial( 5) );
+        System.out.println( "factorial(10) ==> " + factorial( 10) );
     }
 
     // power
@@ -108,15 +119,42 @@ public class ForLoopsToAccumulate
     // example: power( 3.0, 5 ) => 243.0
     // example: power( 3.0, 0 ) => 1.0
     // example: power( 3.0, -2 ) => 0.111111
-    public double power( double A, int B )
+    public static double power( double A, int B )
     {
         return 0.0;
     }
 
+    public static double agm(double x, double y, double errorMargin) {
+        double a_n = (x + y)/2.0;
+        double g_n = babylonianSquareRoot(x*y, errorMargin);
+        while ( a_n - g_n > errorMargin) {
+            a_n = (a_n + g_n) /2.0;
+            g_n = babylonianSquareRoot(a_n * g_n, errorMargin);
+        }
+        return a_n;
+    }
+    
+    public static double babylonianSquareRoot(double S, double accuracy) {
+        if ( S < 0) {
+            System.out.println("Cannot square root negative values.");
+            System.exit(0);
+        }
+        double x = S;
+        double e = accuracy;
+        for (double y = 1; x - y > e; x = (x + y)/2 ) y = S/x;
+        return x;
+    }
+    public static void testBabylonianSquareRoot()
+    {
+        System.out.println("sqrt 2 = " +babylonianSquareRoot(2, 0.00000001));
+    }
     // add some test cases for power here.  Make sure you test a good range of inputs
     public static void testPower()
     {
-
+        System.out.println(
+//                "power( 3.0, 5 ) => 243.0 = " + power( 3.0, 5) 
+//                + "\npower( 3.0, 0 ) => 1.0 = " + power(3.0, 0) 
+                 "\npower( 3.0, -2) => 0.111111 = " + power(3.0, -2));
     }
 
     // isPrime
